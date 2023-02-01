@@ -19,10 +19,27 @@ jobs:
       - run:
           name: Test
           command: pytest
+  deploy:
+      executor: 
+        name: python/default
+        tag: "3.8"
+      steps:
+       - add_ssh_keys:
+          fingerprints:
+            - "85:18:53:6e:75:e5:23:85:d5:41:8f:00:35:36:a8:d1:f7:52:cf:4d"
+       - run:
+          name: AWS EC2 deploy
+          command: |
+            ssh -o StrictHostKeyChecking=no ubuntu@54.175.224.193
+
+
 workflows:
   build-test-and-deploy:
     jobs:
-      - build-and-test:
+      - build-and-test
+      - deploy:
+          requires:
+            - build-and-test
           filters:
             branches:
               only:
