@@ -27,9 +27,13 @@ jobs:
        - run:
           name: AWS EC2 deploy
           command: | 
-            ssh -o StrictHostKeyChecking=no ubuntu@52.91.121.252
-            
-
+            ssh -o StrictHostKeyChecking=no ubuntu@52.91.121.252  \
+            "echo Start deploy && \
+            cd ~/Demo && \
+            git pull && \
+            pip install -r requirements.txt && \
+            python3 -m uvicorn app.main:app && \
+            echo Deploy end"
 
 workflows:
   build-test-and-deploy:
