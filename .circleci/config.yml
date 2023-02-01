@@ -27,8 +27,7 @@ jobs:
        - run:
           name: AWS EC2 deploy
           command: | 
-           chmod 400 ./demo_key.pem 
-            ssh -i ./demo_key ubuntu@54.175.224.193
+            ssh -o StrictHostKeyChecking=no ubuntu@52.91.121.252
             
 
 
