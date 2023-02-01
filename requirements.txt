@@ -29,7 +29,7 @@ keras==2.8.0
 Keras-Preprocessing==1.1.2
 kiwisolver==1.4.2
 libclang==13.0.0
-pytest==7.2.1
+pytest==7.2.0
 Markdown==3.3.6
 matplotlib==3.5.2
 networkx==2.8.2
