@@ -3,9 +3,14 @@ orbs:
   python: circleci/python@1.0.0
 jobs:
   build-and-test:
-    executor: 
-      name: python/default
-      tag: "3.8"
+    docker:
+      - image: cimg/python:3.8
+      - image: cimg/postgres:14.6
+        environment:
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres      
     steps:
       - checkout
       - run:
@@ -22,7 +27,9 @@ jobs:
       - run:
           name: Server
           command: python3 -m uvicorn app.main:app
-   
+      - run:
+          name: Test
+          command: pytest
   deploy:
       executor: 
         name: python/default
