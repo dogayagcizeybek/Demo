@@ -12,10 +12,10 @@ app = FastAPI()
 def get_engine(user, passwd, host, port, db):
     print(f"postgresql://{user}:{passwd}@{host}:{port}/{db}")
     url = f"postgresql://{user}:{passwd}@{host}:{port}/{db}"
-
-    if not database_exists(url):
-        create_database(url)
+    
     engine = create_engine(url, pool_size=50, echo=False)
+    if not database_exists(engine.url):
+        create_database(engine.url)
     return engine
 
 def get_engine_from_settings(settings):
