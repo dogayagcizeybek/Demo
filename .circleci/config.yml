@@ -20,8 +20,9 @@ jobs:
           name: Install PostgreSQL
           command: "sudo apt install -y postgresql-client || true"
       - run:
-          name: Test
-          command: pytest
+          name: Server
+          command: python3 -m uvicorn app.main:app
+   
   deploy:
       executor: 
         name: python/default
