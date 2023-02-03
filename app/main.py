@@ -80,7 +80,7 @@ async def people():
 
 @app.get("/people/{person_id}")
 async def people_with_id(person_id: int):
-    return json_people[person_id]
+    return str(json_people[person_id])
 
 @app.post("/update_people/{person_id}")
 async def update_year(person_id: int,year:int):
@@ -94,7 +94,7 @@ async def update_year(person_id: int,year:int):
                 """.format(json_people[person_id]["name"], json_people[person_id]["year"], person_id)))  
     session.commit()
     
-    return json_people[person_id]
+    return str(json_people[person_id])
 
 
 @app.put("/update_people/{person_id}")
@@ -112,7 +112,7 @@ async def update_people(person_id: int,person: UpdatePerson):
                 """.format(json_people[person_id]["name"], json_people[person_id]["year"], person_id)))  
     session.commit()
     
-    return json_people[person_id]
+    return str(json_people[person_id])
 
 @app.get("/")
 async def root():
