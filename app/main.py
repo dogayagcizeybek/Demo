@@ -18,7 +18,7 @@ def get_engine(user, passwd, host, port, db):
     if not database_exists(engine.url):
         print("database yok")
         create_database(engine.url)
-        
+    print("database var")    
         
     
 
