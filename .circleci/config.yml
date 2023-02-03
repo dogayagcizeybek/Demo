@@ -16,6 +16,9 @@ jobs:
       - run:
           name: Install Dependencies
           command: pip install -r requirements.txt
+      - run: 
+          name: Install PostgreSQL
+          command: "sudo apt install -y postgresql-client || true"
       - run:
           name: Test
           command: pytest
