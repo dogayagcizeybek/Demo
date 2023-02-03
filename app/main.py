@@ -16,7 +16,9 @@ def get_engine(user, passwd, host, port, db):
     engine = create_engine(url, pool_size=50, echo=False)
     print(engine.url)
     if not database_exists(engine.url):
+        print("database yok")
         create_database(engine.url)
+        
         
     
 
