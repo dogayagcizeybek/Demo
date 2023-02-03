@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from typing import Optional
+from pydantic import BaseModel
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import database_exists, create_database
@@ -7,7 +9,10 @@ from app.api.api_v1.api import router as api_router
 
 app = FastAPI()
 
-
+class UpdatePerson(BaseModel):
+    name: Optional[str] = None
+    year: Optional[int] = None
+    
 
 def get_engine(user, passwd, host, port, db):
     print(f"postgresql://{user}:{passwd}@{host}:{port}/{db}")
@@ -32,12 +37,17 @@ def get_engine_from_settings(settings):
 
 engine = get_engine_from_settings(settings)
 
+def get_session(settings, engine):
+    engine = get_engine_from_settings(settings)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    return session
 
-
-        
+session = get_session(settings, engine)
+ 
 def provide_people(engine):
-    with engine.connect() as conn:
-        conn.execute(text("""
+
+    session.execute(text("""
     CREATE TABLE IF NOT EXISTS people ( person_id serial PRIMARY KEY, name VARCHAR(50) NOT NULL, year INT NOT NULL);
     INSERT INTO 
     people (name, year)
@@ -47,12 +57,13 @@ def provide_people(engine):
    ('insan3',22)
     ON CONFLICT DO NOTHING;
     """))
-        result = conn.execute(text("SELECT name, year FROM people"))
+    session.commit()
+    result = session.execute(text("SELECT name, year FROM people"))
     i = 0
     result_dict = dict()
-    for j in result.mappings():
+    for j in result:
         i += 1
-        result_dict[i] = j
+        result_dict[i] = {"name":j[0], "year":j[1]}
     return result_dict
 
 
@@ -71,6 +82,37 @@ async def people():
 async def people_with_id(person_id: int):
     return json_people[person_id]
 
+@app.post("/update_people/{person_id}")
+async def update_year(person_id: int,year:int):
+    json_people[person_id]["year"] = year
+        
+    session.execute(text("""
+                UPDATE people
+        SET name = '{}',
+            year = {}
+        WHERE person_id = {};
+                """.format(json_people[person_id]["name"], json_people[person_id]["year"], person_id)))  
+    session.commit()
+    
+    return json_people[person_id]
+
+
+@app.put("/update_people/{person_id}")
+async def update_people(person_id: int,person: UpdatePerson):
+    json_people[person_id].update(person)
+   
+ 
+       
+        
+    session.execute(text("""
+                UPDATE people
+        SET name = '{}',
+            year = {}
+        WHERE person_id = {};
+                """.format(json_people[person_id]["name"], json_people[person_id]["year"], person_id)))  
+    session.commit()
+    
+    return json_people[person_id]
 
 @app.get("/")
 async def root():
