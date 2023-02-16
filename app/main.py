@@ -45,6 +45,8 @@ def get_session(settings, engine):
 
 session = get_session(settings, engine)
  
+ #Farkli bir brancha kod atma denemesi.
+ 
 def provide_people(engine):
 
     session.execute(text("""
